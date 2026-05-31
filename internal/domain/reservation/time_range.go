@@ -12,24 +12,34 @@ type TimeRange struct {
 }
 
 func NewTimeRange(start, end time.Time) (*TimeRange, error) {
-	if start.IsZero() {
-		return nil, fmt.Errorf("Time range start can't be zero")
-	}
-
-	if end.IsZero() {
-		return nil, fmt.Errorf("Time range end can't be zero")
-	}
-
-	if end.Before(start) {
-		return nil, fmt.Errorf("Time range end can't be before start")
-	}
-
-	if start.Equal(end) {
-		return nil, fmt.Errorf("Time range start and end can't be the same time")
-	}
-
-	return &TimeRange{
+	r := &TimeRange{
 		Start: start,
 		End:   end,
-	}, nil
+	}
+
+	if err := r.Validate(); err != nil {
+		return nil, err
+	}
+
+	return r, nil
+}
+
+func (r *TimeRange) Validate() error {
+	if r.Start.IsZero() {
+		return fmt.Errorf("Time range start can't be zero")
+	}
+
+	if r.End.IsZero() {
+		return fmt.Errorf("Time range end can't be zero")
+	}
+
+	if r.End.Before(r.Start) {
+		return fmt.Errorf("Time range end can't be before start")
+	}
+
+	if r.Start.Equal(r.End) {
+		return fmt.Errorf("Time range start and end can't be the same time")
+	}
+
+	return nil
 }
