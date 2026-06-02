@@ -6,7 +6,7 @@ import (
 	"github.com/amirhossein-shakeri/zhinux-calendar/internal/domain/reservation"
 )
 
-func TestValidVenueID(t *testing.T) {
+func TestVenueIDValidation(t *testing.T) {
 	cases := []struct {
 		name string
 		ID   reservation.VenueID
