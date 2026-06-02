@@ -6,6 +6,7 @@ import (
 )
 
 var (
+	ErrTimeRangeInitFailed     = fmt.Errorf("Failed to initialize new time range")
 	ErrTimeRangeInvalid        = fmt.Errorf("invalid time range")
 	ErrTimeRangeStartIsZero    = fmt.Errorf("Time range start can't be zero")
 	ErrTimeRangeEndIsZero      = fmt.Errorf("Time range end can't be zero")
@@ -26,7 +27,7 @@ func NewTimeRange(start, end time.Time) (*TimeRange, error) {
 	}
 
 	if err := r.Validate(); err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrTimeRangeInvalid, err)
+		return nil, fmt.Errorf("%w: %w", ErrTimeRangeInitFailed, err)
 	}
 
 	return r, nil
@@ -38,19 +39,19 @@ func (r *TimeRange) Duration() time.Duration {
 
 func (r *TimeRange) Validate() error {
 	if r.Start.IsZero() {
-		return ErrTimeRangeStartIsZero
+		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeStartIsZero)
 	}
 
 	if r.End.IsZero() {
-		return ErrTimeRangeEndIsZero
+		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeEndIsZero)
 	}
 
 	if r.End.Before(r.Start) {
-		return ErrTimeRangeEndBeforeStart
+		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeEndBeforeStart)
 	}
 
 	if r.Start.Equal(r.End) {
-		return ErrTimeRangeSameEndStart
+		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeSameEndStart)
 	}
 
 	return nil

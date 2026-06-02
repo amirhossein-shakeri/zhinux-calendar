@@ -72,6 +72,11 @@ func TestTimeRangeValidation(t *testing.T) {
 						tt.start, tt.end, err, reservation.ErrTimeRangeInvalid)
 				}
 
+				if !errors.Is(err, reservation.ErrTimeRangeInitFailed) {
+					ttt.Fatalf("NewTimeRange(%v, %v): Got %v; want %v",
+						tt.start, tt.end, err, reservation.ErrTimeRangeInitFailed)
+				}
+
 				if got != nil {
 					ttt.Fatalf("Expected nil TimeRage, got %+v", got)
 				}
