@@ -2,18 +2,36 @@ package reservation
 
 import "fmt"
 
+var (
+	ErrSlotInitFailed = fmt.Errorf("failed to initialize new slot")
+	ErrSlotInvalid    = fmt.Errorf("invalid slot")
+)
+
 type Slot struct {
 	VenueID   VenueID
 	TimeRange TimeRange
 }
 
+func NewSlot(vID VenueID, tr TimeRange) (*Slot, error) {
+	slot := &Slot{
+		VenueID:   vID,
+		TimeRange: tr,
+	}
+
+	if err := slot.Validate(); err != nil {
+		return nil, fmt.Errorf("%w: %w", ErrSlotInitFailed, err)
+	}
+
+	return slot, nil
+}
+
 func (s *Slot) Validate() error {
-	if !s.VenueID.IsValid() {
-		return fmt.Errorf("Invalid slot: Invalid venue ID")
+	if err := s.VenueID.Validate(); err != nil {
+		return fmt.Errorf("%w: %w", ErrSlotInvalid, err)
 	}
 
 	if err := s.TimeRange.Validate(); err != nil {
-		return fmt.Errorf("Invalid slot time range: %w", err)
+		return fmt.Errorf("%w: %w", ErrSlotInvalid, err)
 	}
 
 	return nil
