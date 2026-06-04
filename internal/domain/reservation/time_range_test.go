@@ -11,6 +11,7 @@ import (
 func TestTimeRangeValidation(t *testing.T) {
 	var zeroTime time.Time
 	validDate := time.Date(2026, 06, 03, 0, 0, 0, 0, time.UTC)
+	emptyTimeRange := reservation.TimeRange{}
 
 	cases := []struct {
 		name  string
@@ -77,8 +78,8 @@ func TestTimeRangeValidation(t *testing.T) {
 						tt.start, tt.end, err, reservation.ErrTimeRangeInitFailed)
 				}
 
-				if got != nil {
-					ttt.Fatalf("Expected nil TimeRage, got %+v", got)
+				if got != emptyTimeRange {
+					ttt.Fatalf("Expected empty TimeRage, got %+v", got)
 				}
 
 				return
@@ -89,22 +90,22 @@ func TestTimeRangeValidation(t *testing.T) {
 					tt.start, tt.end, err)
 			}
 
-			if got == nil {
+			if got == emptyTimeRange {
 				ttt.Fatalf(
-					"NewTimeRange(%v, %v): Expected non-nil TimeRange, got nil",
+					"NewTimeRange(%v, %v): Expected non-empty TimeRange, got nil",
 					tt.start, tt.end)
 			}
 
-			if !got.Start.Equal(tt.start) {
+			if !got.Start().Equal(tt.start) {
 				ttt.Errorf(
 					"NewTimeRange(%v, %v): Mismatching starts, got %v; expected %v",
-					tt.start, tt.end, got.Start, tt.start)
+					tt.start, tt.end, got.Start(), tt.start)
 			}
 
-			if !got.End.Equal(tt.end) {
+			if !got.End().Equal(tt.end) {
 				ttt.Errorf(
 					"NewTimeRange(%v, %v): Mismatching ends, got %v; expected %v",
-					tt.start, tt.end, got.End, tt.end)
+					tt.start, tt.end, got.End(), tt.end)
 			}
 
 			duration := got.Duration()
