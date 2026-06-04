@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	ErrTimeRangeInitFailed     = fmt.Errorf("Failed to initialize new time range")
+	ErrTimeRangeInitFailed     = fmt.Errorf("failed to initialize new time range")
 	ErrTimeRangeInvalid        = fmt.Errorf("invalid time range")
 	ErrTimeRangeStartIsZero    = fmt.Errorf("Time range start can't be zero")
 	ErrTimeRangeEndIsZero      = fmt.Errorf("Time range end can't be zero")
@@ -16,41 +16,46 @@ var (
 
 // Represents a time period with clear start and end
 type TimeRange struct {
-	Start time.Time
-	End   time.Time
+	start time.Time // Immutable value object member
+	end   time.Time // Immutable value object member
 }
 
-func NewTimeRange(start, end time.Time) (*TimeRange, error) {
-	r := &TimeRange{
-		Start: start,
-		End:   end,
+// NewTimeRange constructs a new TimeRange with invariants enforced
+// and since it's small, we'd prefer returning value over pointer
+func NewTimeRange(start, end time.Time) (TimeRange, error) {
+	r := TimeRange{
+		start: start,
+		end:   end,
 	}
 
 	if err := r.Validate(); err != nil {
-		return nil, fmt.Errorf("%w: %w", ErrTimeRangeInitFailed, err)
+		return TimeRange{}, fmt.Errorf("%w: %w", ErrTimeRangeInitFailed, err)
 	}
 
 	return r, nil
 }
 
+func (r *TimeRange) Start() time.Time { return r.start }
+func (r *TimeRange) End() time.Time   { return r.end }
+
 func (r *TimeRange) Duration() time.Duration {
-	return r.End.Sub(r.Start)
+	return r.End().Sub(r.Start())
 }
 
 func (r *TimeRange) Validate() error {
-	if r.Start.IsZero() {
+	if r.Start().IsZero() {
 		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeStartIsZero)
 	}
 
-	if r.End.IsZero() {
+	if r.End().IsZero() {
 		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeEndIsZero)
 	}
 
-	if r.End.Before(r.Start) {
+	if r.End().Before(r.Start()) {
 		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeEndBeforeStart)
 	}
 
-	if r.Start.Equal(r.End) {
+	if r.Start().Equal(r.End()) {
 		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeSameEndStart)
 	}
 
