@@ -42,6 +42,10 @@ func (r *TimeRange) Duration() time.Duration {
 	return r.End().Sub(r.Start())
 }
 
+func (r *TimeRange) Overlaps(otherTimeRange TimeRange) bool {
+	return r.start.Before(otherTimeRange.end) && otherTimeRange.start.Before(r.end)
+}
+
 func (r *TimeRange) Validate() error {
 	if r.Start().IsZero() {
 		return fmt.Errorf("%w: %w", ErrTimeRangeInvalid, ErrTimeRangeStartIsZero)
