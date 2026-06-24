@@ -117,3 +117,61 @@ func TestTimeRangeValidation(t *testing.T) {
 		})
 	}
 }
+
+// In inverval math, there are exactly 6 ways two intervals can
+// relate. If we cover those 6, we've tested the entire logic
+// space, so we won't need to hardcode a full matrix test case
+// and a static truth table.
+//
+// Separated(A before B)
+// Touching(A end = B start)
+// Overlapping(Partial)
+// Contained(A inside B)
+// Containing(B inside A)
+// Identical
+func TestTimeRangeOverlap(t *testing.T) {
+	baseStart := time.Date(2026, 06, 24, 10, 0, 0, 0, time.UTC)
+	baseEnd := baseStart.Add(2 * time.Hour)
+
+	// Reference range A: [10:00, 12:00)
+	a, err := reservation.NewTimeRange(baseStart, baseEnd)
+	if err != nil {
+		t.Fatalf("Failed to initialize reference time range: %v", err)
+	}
+
+	cases := []struct {
+		name     string
+		start    time.Time
+		end      time.Time
+		expected bool
+	}{
+		{"Separated Before", baseStart.Add(-4 * time.Hour), baseStart.Add(-2 * time.Hour), false},
+		{"Touching Before", baseStart.Add(-2 * time.Hour), baseStart, false},
+		{"Overlapping Start", baseStart.Add(-1 * time.Hour), baseStart.Add(1 * time.Hour), true},
+		{"Identical", baseStart, baseEnd, true},
+		{"Inside", baseStart.Add(30 * time.Minute), baseEnd.Add(-30 * time.Minute), true},
+		{"Encompassing", baseStart.Add(-1 * time.Hour), baseEnd.Add(1 * time.Hour), true},
+		{"Overlapping End", baseStart.Add(1 * time.Hour), baseEnd.Add(1 * time.Hour), true},
+		{"Touching After", baseEnd, baseEnd.Add(2 * time.Hour), false},
+		{"Separated After", baseEnd.Add(1 * time.Hour), baseEnd.Add(3 * time.Hour), false},
+	}
+
+	for _, tt := range cases {
+		t.Run(tt.name, func(t *testing.T) {
+			b, err := reservation.NewTimeRange(tt.start, tt.end)
+			if err != nil {
+				t.Fatalf("Failed to initialize sub time range: %v", err)
+			}
+
+			got := a.Overlaps(b)
+			if got != tt.expected {
+				t.Errorf("%s: Overlaps() = %v, want %v", tt.name, got, tt.expected)
+			}
+
+			// Check symmetry invariant(Reverse should result the same)
+			if a.Overlaps(b) != b.Overlaps(a) {
+				t.Errorf("%s: Symmetry failed! A.Overlaps(B) != B.Overlaps(A)", tt.name)
+			}
+		})
+	}
+}
