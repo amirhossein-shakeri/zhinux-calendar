@@ -8,8 +8,8 @@ var (
 )
 
 type Slot struct {
-	VenueID   VenueID
-	TimeRange TimeRange
+	VenueID VenueID
+	TimeRange
 }
 
 func NewSlot(vID VenueID, tr TimeRange) (*Slot, error) {
@@ -35,4 +35,8 @@ func (s *Slot) Validate() error {
 	}
 
 	return nil
+}
+
+func (s *Slot) IsEqualTo(otherSlot *Slot) bool {
+	panic("not implemente")
 }
