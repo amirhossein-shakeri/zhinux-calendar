@@ -346,14 +346,14 @@ func TestCanReserve(t *testing.T) {
 					t.Errorf("expecting a rejected reason but got empty wantReasonNeedles")
 				}
 
-				if tt.wantReasonNeedle != nil && len(tt.wantReasonNeedle) > 0 {
+				if len(tt.wantReasonNeedle) > 0 {
 					if gotReason == "" {
 						t.Fatalf("CanReserve() got empty reason for denied request: expected %v", tt.wantReasonNeedle)
 					}
 					assertContainsAll(t, gotReason, tt.wantReasonNeedle)
 				}
 
-				if tt.wantAllowed && tt.wantReasonNeedle != nil && len(tt.wantReasonNeedle) > 0 {
+				if tt.wantAllowed && len(tt.wantReasonNeedle) > 0 {
 					assertContainsAll(t, gotReason, tt.wantReasonNeedle)
 				}
 			})
