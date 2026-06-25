@@ -8,10 +8,10 @@ import (
 var (
 	ErrTimeRangeInitFailed     = fmt.Errorf("failed to initialize new time range")
 	ErrTimeRangeInvalid        = fmt.Errorf("invalid time range")
-	ErrTimeRangeStartIsZero    = fmt.Errorf("Time range start can't be zero")
-	ErrTimeRangeEndIsZero      = fmt.Errorf("Time range end can't be zero")
-	ErrTimeRangeEndBeforeStart = fmt.Errorf("Time range end can't be before start")
-	ErrTimeRangeSameEndStart   = fmt.Errorf("Time range start and end can't be the same time")
+	ErrTimeRangeStartIsZero    = fmt.Errorf("time range start can't be zero")
+	ErrTimeRangeEndIsZero      = fmt.Errorf("time range end can't be zero")
+	ErrTimeRangeEndBeforeStart = fmt.Errorf("time range end can't be before start")
+	ErrTimeRangeSameEndStart   = fmt.Errorf("time range start and end can't be the same time")
 )
 
 // Represents a time period with clear start and end
