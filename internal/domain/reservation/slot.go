@@ -42,6 +42,10 @@ func (s *Slot) Validate() error {
 		return fmt.Errorf("%w: %w", ErrSlotInvalid, err)
 	}
 
+	if s.TimeRange.Duration() < SlotMinDuration {
+		return fmt.Errorf("%w: %w", ErrSlotInvalid, ErrSlotMinDuration)
+	}
+
 	return nil
 }
 

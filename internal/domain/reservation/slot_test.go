@@ -65,6 +65,37 @@ func TestNewSlot_InvalidVenueID(t *testing.T) {
 	}
 }
 
+func TestNewSlot_InvalidMinDuration(t *testing.T) {
+	invalidVenueID := reservation.VenueID(184)
+	start := time.Date(2026, 06, 04, 0, 0, 0, 0, time.UTC)
+	end := start.Add(reservation.SlotMinDuration - time.Second)
+	validTimeRange, err := reservation.NewTimeRange(start, end)
+	if err != nil {
+		t.Fatalf("Couldn't initialize valid time range: %v", err)
+	}
+
+	got, err := reservation.NewSlot(invalidVenueID, validTimeRange)
+	if err == nil {
+		t.Errorf("Got no error; expected init/validation error")
+	}
+
+	if got != nil {
+		t.Errorf("Got non-nil slot; expected nil: %+v", got)
+	}
+
+	if !errors.Is(err, reservation.ErrSlotInitFailed) {
+		t.Errorf("Got error %v; expected error %v", err, reservation.ErrSlotInitFailed)
+	}
+
+	if !errors.Is(err, reservation.ErrSlotInvalid) {
+		t.Errorf("Got error %v; expected error %v", err, reservation.ErrSlotInvalid)
+	}
+
+	if !errors.Is(err, reservation.ErrSlotMinDuration) {
+		t.Errorf("Got error %v; expected error %v", err, reservation.ErrSlotMinDuration)
+	}
+}
+
 func TestNewSlot_ValidTimeRangeAndVenueID(t *testing.T) {
 	validVenueID := reservation.VenueID(83)
 	start := time.Date(2026, 06, 04, 0, 0, 0, 0, time.UTC)
