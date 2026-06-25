@@ -45,6 +45,12 @@ func (s *Slot) Validate() error {
 	return nil
 }
 
+// TODO: Add unit tests
 func (s *Slot) IsEqualTo(otherSlot *Slot) bool {
-	panic("not implemente")
+	if otherSlot == nil {
+		return false
+	}
+
+	return s.VenueID == otherSlot.VenueID &&
+		s.TimeRange.IsEqualTo(&otherSlot.TimeRange)
 }
