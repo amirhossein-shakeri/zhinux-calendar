@@ -49,7 +49,6 @@ func (s *Slot) Validate() error {
 	return nil
 }
 
-// TODO: Add unit tests
 func (s *Slot) IsEqualTo(otherSlot *Slot) bool {
 	if otherSlot == nil {
 		return false

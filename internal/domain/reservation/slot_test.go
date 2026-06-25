@@ -114,3 +114,44 @@ func TestNewSlot_ValidTimeRangeAndVenueID(t *testing.T) {
 		t.Errorf("Got nil slot; expected value")
 	}
 }
+
+func TestSlotEqual(t *testing.T) {
+	start := time.Date(2026, 06, 25, 10, 54, 0, 0, time.UTC)
+	rangeA, errA := reservation.NewTimeRange(start, start.Add(30*time.Minute))
+	rangeB, errB := reservation.NewTimeRange(start, start.Add(60*time.Minute))
+	if errA != nil || errB != nil {
+		t.Fatalf("Failed to initialize time ranges: %v, %v", errA, errB)
+	}
+
+	a, errA := reservation.NewSlot(reservation.VenueID(12), rangeA)
+	b, errB := reservation.NewSlot(reservation.VenueID(12), rangeB)
+	c, errC := reservation.NewSlot(reservation.VenueID(14), rangeA)
+	if errA != nil || errB != nil || errC != nil {
+		t.Fatalf("Failed to initialize time ranges: %v, %v, %v", errA, errB, errC)
+	}
+
+	// Nil comparison
+	if a.IsEqualTo(nil) {
+		t.Errorf("Comparing slot with nil should be false, got true")
+	}
+
+	// Different VenueIDs, Different Ranges
+	if c.IsEqualTo(b) {
+		t.Errorf("Slot comparison with different VenueIDs and different TimeRanges got true, expected false")
+	}
+
+	// Same VenueIDs, Different Ranges
+	if a.IsEqualTo(b) {
+		t.Errorf("Slot comparison with same VenueIDs and different TimeRanges got true, expected false")
+	}
+
+	// Different VenueIDs, Same Ranges
+	if a.IsEqualTo(c) {
+		t.Errorf("Slot comparison with different VenueIDs and same TimeRanges got true, expected false")
+	}
+
+	// Self comparison
+	if !c.IsEqualTo(c) {
+		t.Errorf("Slot comparison with same VenueIDs and same TimeRanges got false, expected true")
+	}
+}
