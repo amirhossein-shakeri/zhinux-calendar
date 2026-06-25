@@ -175,3 +175,21 @@ func TestTimeRangeOverlap(t *testing.T) {
 		})
 	}
 }
+
+func TestTimeRangeEqual(t *testing.T) {
+	start := time.Date(2026, 06, 25, 10, 43, 0, 0, time.UTC)
+	a, errA := reservation.NewTimeRange(start, start.Add(30*time.Minute))
+	b, errB := reservation.NewTimeRange(start, start.Add(30*time.Minute))
+	c, errC := reservation.NewTimeRange(start, start.Add(60*time.Minute))
+	if errA != nil || errB != nil || errC != nil {
+		t.Fatalf("Failed to initialize time ranges: %v, %v, %v", errA, errB, errC)
+	}
+
+	if !a.IsEqualTo(&b) {
+		t.Errorf("Time range equality check, got false; expected true")
+	}
+
+	if b.IsEqualTo(&c) {
+		t.Errorf("Time range equality check, got true; expected false")
+	}
+}

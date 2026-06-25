@@ -66,7 +66,6 @@ func (r *TimeRange) Validate() error {
 	return nil
 }
 
-// TODO: Add unit tests
 func (r *TimeRange) IsEqualTo(otherTimeRange *TimeRange) bool {
 	if otherTimeRange == nil {
 		return false
