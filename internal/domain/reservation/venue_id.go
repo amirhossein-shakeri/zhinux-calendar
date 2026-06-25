@@ -1,6 +1,8 @@
 package reservation
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var (
 	ErrVenueIDInvalid  = fmt.Errorf("invalid venue ID")
@@ -20,4 +22,13 @@ func (id VenueID) Validate() error {
 	}
 
 	return nil
+}
+
+// TODO: Add unit tests
+func (id VenueID) String() string {
+	return fmt.Sprintf("%d", id)
+}
+
+func (id VenueID) Int() int {
+	return int(id)
 }
