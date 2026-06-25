@@ -1,10 +1,18 @@
 package reservation
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
+
+const (
+	SlotMinDuration time.Duration = time.Minute * 15
+)
 
 var (
-	ErrSlotInitFailed = fmt.Errorf("failed to initialize new slot")
-	ErrSlotInvalid    = fmt.Errorf("invalid slot")
+	ErrSlotInitFailed  = fmt.Errorf("failed to initialize new slot")
+	ErrSlotInvalid     = fmt.Errorf("invalid slot")
+	ErrSlotMinDuration = fmt.Errorf("slot can't be shorter than %s", SlotMinDuration)
 )
 
 type Slot struct {
